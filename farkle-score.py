@@ -44,8 +44,13 @@ while True:
     round += 1
     print("Round ", round)
     for i in range(len(players)):
-        print(players[i], "'s turn.")
-        turnScore = int(input("Score for this turn: "))
+        while True:
+            try:
+                print(players[i], "'s turn.")
+                turnScore = int(input("Score for this turn: "))
+                break
+            except ValueError:
+                print("Not an integer. Try again.\n")
         scores[i] += turnScore
         print("\n")
         printScores()
