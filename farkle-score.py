@@ -12,8 +12,9 @@ def printScores():
     global gameOver
     print("Current scores:")
     for i in range(len(players)):
-        print(players[i], "\n\t", scores[i],)
-        if scores[i] >= scoreLimit:
+        playerScore = sum(scores[i])
+        print(players[i], "\n\t", playerScore)
+        if playerScore >= scoreLimit:
             print(players[i], " is the winner!")
             gameOver = True
     print("\n")
@@ -38,7 +39,7 @@ for i in players:
 print("\n")
 
 for i in range(len(players)):
-    scores.append(0)
+    scores.append([])
 
 while True:
     round += 1
@@ -51,6 +52,6 @@ while True:
                 break
             except ValueError:
                 print("Not an integer. Try again.\n")
-        scores[i] += turnScore
+        scores[i].append(turnScore)
         print("\n")
         printScores()
