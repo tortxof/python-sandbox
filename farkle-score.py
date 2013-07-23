@@ -23,6 +23,24 @@ def gameOver():
             over = True
     return(over)
 
+def undoScores():
+    global round
+    round = 0
+    while True:
+        for i in range(len(players)):
+            print(i, players[i])
+            print(scores[i])
+        while True:
+            try:
+                selectedPlayer = int(input("Edit which player: "))
+                break
+            except ValueError:
+                print("Not an integer. Try again")
+        if selectedPlayer >= 0 and selectedPlayer < len(players):
+            scores[selectedPlayer].pop()
+        else:
+            break
+
 print("Enter player names. Enter blank line for no new players.")
 
 while True:
@@ -45,6 +63,8 @@ while True:
     round += 1
     print("Round ", round)
     for i in range(len(players)):
+        if len(scores[i]) >= round:
+            continue
         while True:
             try:
                 print(players[i], "'s turn.")
@@ -52,9 +72,13 @@ while True:
                 break
             except ValueError:
                 print("Not an integer. Try again.\n")
-        scores[i].append(turnScore)
-        print("\n")
-        printScores()
+        if turnScore >= 0:
+            scores[i].append(turnScore)
+            print("\n")
+            printScores()
+        else:
+            undoScores()
+            break
     if gameOver():
         print("Game Over!")
         sys.exit(0)
