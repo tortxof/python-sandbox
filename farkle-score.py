@@ -1,4 +1,4 @@
-#! /usr/bin/env python3.2
+#! /usr/bin/env python3
 
 import sys
 
@@ -8,13 +8,18 @@ scores = []
 scoreLimit = 10000
 
 def printScores():
-    print("Current scores:")
+    print("\nCurrent scores:")
     for i in range(len(players)):
         playerScore = sum(scores[i])
         print(players[i], "\n\t", playerScore)
         if playerScore >= scoreLimit:
-            print(players[i], " is the winner!")
-    print("\n")
+            print(players[i], "is the winner!")
+
+def printRoundScores():
+    print("\nScores per round:")
+    for i in range(len(players)):
+        print(i, players[i])
+        print(scores[i])
 
 def gameOver():
     over = False
@@ -27,9 +32,7 @@ def undoScores():
     global round
     round = 0
     while True:
-        for i in range(len(players)):
-            print(i, players[i])
-            print(scores[i])
+        printRoundScores()
         while True:
             try:
                 selectedPlayer = int(input("Edit which player: "))
@@ -41,7 +44,7 @@ def undoScores():
         else:
             break
 
-print("Enter player names. Enter blank line for no new players.")
+print("Enter player names. Enter blank line for no new players.\n")
 
 while True:
     newplayer = input('Player name: ')
@@ -49,36 +52,35 @@ while True:
         players.append(newplayer)
     else:
         break
-print("\n")
 
 print("\nPlayers:")
 for i in players:
     print(i)
-print("\n")
 
 for i in range(len(players)):
     scores.append([])
 
 while True:
     round += 1
-    print("Round ", round)
     for i in range(len(players)):
         if len(scores[i]) >= round:
             continue
+        print("\nRound", round)
         while True:
             try:
-                print(players[i], "'s turn.")
+                print(players[i] + "'s turn.")
                 turnScore = int(input("Score for this turn: "))
                 break
             except ValueError:
                 print("Not an integer. Try again.\n")
         if turnScore >= 0:
             scores[i].append(turnScore)
-            print("\n")
             printScores()
         else:
             undoScores()
             break
     if gameOver():
         print("Game Over!")
+        printRoundScores()
+        printScores()
         sys.exit(0)
