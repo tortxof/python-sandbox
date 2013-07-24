@@ -4,6 +4,7 @@ import sys
 
 round = 0
 players = []
+winners = []
 scores = []
 scoreLimit = 10000
 
@@ -12,8 +13,6 @@ def printScores():
     for i in range(len(players)):
         playerScore = sum(scores[i])
         print(players[i], "\n\t", playerScore)
-        if playerScore >= scoreLimit:
-            print(players[i], "is the winner!")
 
 def printRoundScores():
     print("\nScores per round:")
@@ -25,6 +24,7 @@ def gameOver():
     over = False
     for i in range(len(players)):
         if sum(scores[i]) >= scoreLimit:
+            winners.append(i)
             over = True
     return(over)
 
@@ -80,7 +80,14 @@ while True:
             undoScores()
             break
     if gameOver():
-        print("Game Over!")
+        print("""
+##################
+### Game Over! ###
+##################
+""")
         printRoundScores()
         printScores()
+        print("\nWinners:")
+        for i in winners:
+            print(players[i])
         sys.exit(0)
