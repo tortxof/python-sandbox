@@ -1,4 +1,5 @@
-#! /usr/bin/env python3.2
+#! /usr/bin/env python3
+
 import sys
 import random
 numflips = 5

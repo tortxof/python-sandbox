@@ -1,4 +1,4 @@
-#! /usr/bin/env python3.2
+#! /usr/bin/env python3
 blocksize = abs(int(input("Block size: ")))
 x = y = 0
 while x <= 1024 * 8:
