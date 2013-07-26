@@ -1,8 +1,6 @@
 #! /usr/bin/env python3
 
 import random
-import time
-import sys
 
 class Field:
     def __init__(self, sizex, sizey):
@@ -74,17 +72,19 @@ class Field:
             for y in range(self.sizey):
                 self.field[x][y][0] = random.randrange(2)
 
-maxGenerations = 2000
 
-f1 = Field(1280, 720)
-f1.randomize()
+if __name__ == "__main__":
+    import sys
+    import time
 
-
-while True:
-#   f1.draw()
-    f1.writepbm()
-    print(f1.generation)
-    f1.tick()
-    if not (maxGenerations > 0 and f1.generation < maxGenerations):
-        sys.exit(0)
+    maxGenerations = 2000
+    f1 = Field(50, 50)
+    f1.randomize()
+    while True:
+        f1.draw()
+#       f1.writepbm()
+        print(f1.generation)
+        f1.tick()
+        if not (maxGenerations > 0 and f1.generation < maxGenerations):
+            sys.exit(0)
 #   time.sleep(sleeptime)
