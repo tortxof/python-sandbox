@@ -2,10 +2,12 @@
 
 import random
 import time
+import sys
 
 updaterate = 24
-sizex = 120
-sizey = 50
+maxGenerations = 1500
+sizex = int(1280/2)
+sizey = int(720/2)
 field = [[[0, 0] for i in range(sizey)] for i in range(sizex)]
 sleeptime = 1 / updaterate
 generation = 0
@@ -22,6 +24,22 @@ def drawField():
     print("\n\n")
     for i in row:
         print(i)
+
+# write field to pbm file
+def writeField():
+    filename = str(generation).zfill(8) + '.pbm'
+    file = open(filename, 'wt')
+    file.write('P1\n')
+    file.write('{} {}\n'.format(sizex, sizey))
+    for y in range(sizey):
+        row = ''
+        for x in range(sizex):
+            if x > 0:
+                row += ' '
+            row += str(field[x][y][0])
+        row += '\n'
+        file.write(row)
+    file.close()
 
 def tickField():
     global field
@@ -65,7 +83,10 @@ def randomField():
 randomField()
 
 while True:
-    drawField()
+#   drawField()
+    writeField()
     print(generation)
     tickField()
-    time.sleep(sleeptime)
+    if not (maxGenerations > 0 and generation < maxGenerations):
+        sys.exit(0)
+#   time.sleep(sleeptime)
