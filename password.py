@@ -3,37 +3,52 @@
 import sqlite3
 import subprocess
 
-# pwdatabase = '/home/tortxof/private/passwords.db'
-pwdatabase = ':memory:'
+pwdatabase = '/home/tortxof/private/passwords.db'
+# pwdatabase = ':memory:'
+
+headers = ('Title','URL','Username','Password','Other')
+
 
 def pwSearch(query):
     conn = sqlite3.connect(pwdatabase)
-    result = conn.execute("select * from passwords where name like '%{}%'".format(query))
+    result = conn.execute("select * from passwords where name like ?", ['%' + query + '%'])
     showResult(result)
 
 def showResult(result):
     for row in result:
+        i = 0
         for field in row:
-            print(field)
+            print(headers[i] + ': ' + field)
+            i += 1
         print()
 
 def newPassword():
-    conn = sqlite3.connect(pwdatabase)
     print('Creating new password entry.')
     newrecord = ['' for i in range(5)]
-    newrecord[0] = input('Title: ')
-    newrecord[1] = input('URL: ')
-    newrecord[2] = input('Username: ')
+    newrecord[0] = input(headers[0] + ': ')
+    newrecord[1] = input(headers[1] + ': ')
+    newrecord[2] = input(headers[2] + ': ')
     newrecord[3] = subprocess.check_output(['pwgen','-cn','12','1']).decode().strip()
-    newrecord[4] = input('Other: ')
-    conn.execute("create table passwords ('title', 'url', 'username', 'password', 'other')")
-    conn.execute('insert into passwords values (?, ?, ?, ?, ?)', newrecord)
-    conn.commit()
-    for i in conn.execute('select * from passwords'):
-        print(i)
+    newrecord[4] = input(headers[4] + ': ')
+    print('Add this record to database?\n')
+    for i in range(len(headers)):
+        print(headers[i] + ': ' + newrecord[i])
+    print()
+    if input('?') == 'y':
+        conn = sqlite3.connect(pwdatabase)
+        conn.execute('insert into passwords values (?, ?, ?, ?, ?)', newrecord)
+        conn.commit()
+        conn.close()
+    else:
+        print('Aborted')
 
-def getCmd():
-    pass
+while True:
+    print('(a)dd new password\n(s)earch for password\n(q)uit')
+    cmd = input('?')
 
-# pwSearch(input("Search: "))
-newPassword()
+    if cmd == 'a':
+        newPassword()
+    elif cmd == 's':
+        pwSearch(input('Search: '))
+    else:
+        break
