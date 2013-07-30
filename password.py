@@ -11,7 +11,7 @@ headers = ('Title','URL','Username','Password','Other')
 
 def pwSearch(query):
     conn = sqlite3.connect(pwdatabase)
-    result = conn.execute("select * from passwords where name like ?", ['%' + query + '%'])
+    result = conn.execute("select * from passwords where name like ?", ['%{}%'.format(query)])
     showResult(result)
 
 def showResult(result):
