@@ -23,9 +23,9 @@ class Field:
 
     def writepbm(self):
         filename = str(self.generation).zfill(8) + '.pbm'
-        file = open(filename, 'wt')
-        file.write('P1\n')
-        file.write('{} {}\n'.format(self.sizex, self.sizey))
+        f = open(filename, 'wt')
+        f.write('P1\n')
+        f.write('{} {}\n'.format(self.sizex, self.sizey))
         for y in range(self.sizey):
             row = ''
             for x in range(self.sizex):
@@ -33,8 +33,8 @@ class Field:
                     row += ' '
                 row += str(self.field[x][y][0])
             row += '\n'
-            file.write(row)
-        file.close()
+            f.write(row)
+        f.close()
 
     def tick(self):
         self.generation += 1
