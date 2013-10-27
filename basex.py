@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+# alphabet = '2346789BCDFGHJKMPQRTVWXY'
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 number = int(input('Enter a positive integer:'))
