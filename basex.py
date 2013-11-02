@@ -3,6 +3,18 @@
 # alphabet = '2346789BCDFGHJKMPQRTVWXY'
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
+
+def numduplicates(alphabet):
+    count = 0
+    for i in alphabet:
+        if alphabet.count(i) > 1:
+            count += 1
+    return(count)
+
+if numduplicates(alphabet) > 0:
+    print('Duplicate characters in alphabet.')
+    exit(1)
+
 number = int(input('Enter a positive integer:'))
 
 hash = ''
