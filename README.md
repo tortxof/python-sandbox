@@ -3,4 +3,4 @@ python-sandbox
 
 Experiments in python.
 
-Use this code at your own risk. :)
+Use this code at your own risk. :D
