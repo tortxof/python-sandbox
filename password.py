@@ -6,6 +6,7 @@ import subprocess
 pwdatabase = '/home/tortxof/private/passwords.db'
 # pwdatabase = ':memory:'
 
+prompt = '> '
 headers = ('Title','URL','Username','Password','Other')
 
 
@@ -34,7 +35,7 @@ def newPassword():
     for i in range(len(headers)):
         print(headers[i] + ': ' + newrecord[i])
     print()
-    if input('?') == 'y':
+    if input(prompt) == 'y':
         conn = sqlite3.connect(pwdatabase)
         conn.execute('insert into passwords values (?, ?, ?, ?, ?)', newrecord)
         conn.commit()
@@ -44,7 +45,7 @@ def newPassword():
 
 while True:
     print('(a)dd new password\n(s)earch for password\n(q)uit')
-    cmd = input('?')
+    cmd = input(prompt)
 
     if cmd == 'a':
         newPassword()
