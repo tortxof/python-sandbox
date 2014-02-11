@@ -45,6 +45,20 @@ def newPassword():
     else:
         print('Aborted')
 
+
+
+class Root(object):
+    def index(self):
+        return "Index placeholder."
+    index.exposed = True
+    def search(self, query):
+        return "Search results."
+    search.exposed = True
+
+cherrypy.quickstart(Root())
+
+
+'''
 while True:
     print('(a)dd new password\n(s)earch for password\n(q)uit')
     cmd = input(prompt)
@@ -55,3 +69,4 @@ while True:
         pwSearch(input('Search: '))
     else:
         break
+'''
