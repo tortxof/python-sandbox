@@ -13,17 +13,18 @@ headers = ('Title','URL','Username','Password','Other')
 
 def pwSearch(query):
     conn = sqlite3.connect(pwdatabase)
-    result = conn.execute("select * from passwords where name like ?", ['%{}%'.format(query)])
+    result = showResult(conn.execute("select * from passwords where name like ?", ['%{}%'.format(query)]))
     conn.close()
     return result
 
 def showResult(result):
+    out = ''
     for row in result:
         i = 0
         for field in row:
-            print(headers[i] + ': ' + field)
+            out += headers[i] + ': ' + field + '<br />'
             i += 1
-        print()
+    return out
 
 def newPassword():
     print('Creating new password entry.')
@@ -52,7 +53,7 @@ class Root(object):
         return "Index placeholder."
     index.exposed = True
     def search(self, query):
-        return "Search results."
+        return pwSearch(query)
     search.exposed = True
 
 cherrypy.quickstart(Root())
