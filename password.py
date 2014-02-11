@@ -2,6 +2,7 @@
 
 import sqlite3
 import subprocess
+import cherrypy
 
 pwdatabase = '/home/tortxof/private/passwords.db'
 # pwdatabase = ':memory:'
@@ -13,8 +14,8 @@ headers = ('Title','URL','Username','Password','Other')
 def pwSearch(query):
     conn = sqlite3.connect(pwdatabase)
     result = conn.execute("select * from passwords where name like ?", ['%{}%'.format(query)])
-    showResult(result)
     conn.close()
+    return result
 
 def showResult(result):
     for row in result:
