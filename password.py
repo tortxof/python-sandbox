@@ -7,6 +7,12 @@ import cherrypy
 pwdatabase = '/home/tortxof/private/passwords.db'
 # pwdatabase = ':memory:'
 
+html_searchform = """
+<form name="search" action="/search" method="post">
+<input type="text" name="query">
+<input type="submit" value="Search">
+</form>
+"""
 prompt = '> '
 headers = ('Title','URL','Username','Password','Other')
 
@@ -51,10 +57,10 @@ def newPassword():
 
 class Root(object):
     def index(self):
-        return "Index placeholder."
+        return html_searchform
     index.exposed = True
     def search(self, query):
-        return pwSearch(query)
+        return pwSearch(query) + html_searchform
     search.exposed = True
 
 cherrypy.quickstart(Root())
