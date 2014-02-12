@@ -37,11 +37,11 @@ def pwSearch(query):
     return result
 
 def showResult(result):
-    out = '<table>'
+    out = '<table>\n'
     for row in result:
         i = 0
         for field in row:
-            out += '<tr><td>' + headers[i] + ':</td><td>' + field + '</td></tr>'
+            out += '<tr><td>' + headers[i] + ':</td><td>' + field + '</td></tr>\n'
             i += 1
     out += '</table>'
     return out
