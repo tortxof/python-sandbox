@@ -12,6 +12,20 @@ html_template = """
 <html>
 <head>
 <meta charset="UTF-8">
+<style>
+body {{
+background-color:#666;
+padding:16px;
+}}
+.searchform, .addform, .results {{
+background-color:#ccc;
+border:1px solid #333;
+margin:32px;
+padding:32px;
+float:left;
+clear:both;
+}}
+</style>
 <title>Password Manager</title>
 </head>
 <body>
@@ -21,14 +35,17 @@ html_template = """
 """
 
 html_searchform = """
+<div class="searchform">
 Search<br />
 <form name="search" action="/search" method="post">
 <input type="text" name="query">
 <input type="submit" value="Search">
 </form>
+</div>
 """
 
 html_addform = """
+<div class="addform">
 Add<br />
 <form name="add" action="/add" method="post">
 <table>
@@ -39,9 +56,11 @@ Add<br />
 </table>
 <input type="submit" value="Add">
 </form>
+</div>
 """
 
 html_results = """
+<div class="results">
 <table>
 <tr><td>{headers[0]}</td><td>{title}</td></tr>
 <tr><td>{headers[1]}</td><td><a href="{url}">{url}</a></td></tr>
@@ -49,6 +68,7 @@ html_results = """
 <tr><td>{headers[3]}</td><td>{password}</td></tr>
 <tr><td>{headers[4]}</td><td>{other}</td></tr>
 </table>
+</div>
 """
 
 prompt = '> '
