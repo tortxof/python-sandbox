@@ -17,7 +17,7 @@ body {{
 background-color:#666;
 padding:16px;
 }}
-.searchform, .addform, .results {{
+.searchform, .addform, .results, .message, .confirmdelete {{
 background-color:#ccc;
 border:1px solid #333;
 margin:32px;
@@ -67,10 +67,19 @@ html_results = """
 <tr><td>{headers[2]}</td><td>{username}</td></tr>
 <tr><td>{headers[3]}</td><td>{password}</td></tr>
 <tr><td>{headers[4]}</td><td>{other}</td></tr>
-<tr><td>rowid</td><td>{rowid}</td></tr>
 </table>
+<a href="/delete?rowid={rowid}">Delete</a>
 </div>
 """
+
+html_message = """
+<div class="message">{message}</div>
+"""
+
+html_confirmdelete = """
+<div class="confirmdelete"><a href="/delete?rowid={rowid}&confirm=true">Confirm Delete</a></div>
+"""
+
 headers = ('Title','URL','Username','Password','Other')
 
 def pwSearch(query):
@@ -108,5 +117,23 @@ class Root(object):
         conn.close()
         return html_template.format(content=out)
     add.exposed = True
+    def delete(self, rowid, confirm=''):
+        out = ''
+        if confirm == 'true':
+            conn = sqlite3.connect(pwdatabase)
+            out += html_message.format(message="Record Deleted")
+            out += showResult(conn.execute("select *,rowid from passwords where rowid=?", [rowid]))
+            conn.execute("delete from passwords where rowid=?", [rowid])
+            conn.commit()
+            conn.close()
+        else:
+            conn = sqlite3.connect(pwdatabase)
+            out += html_message.format(message="Are you sure you want to delete this record?")
+            out += showResult(conn.execute("select *,rowid from passwords where rowid=?", [rowid]))
+            out += html_confirmdelete.format(rowid=rowid)
+            conn.close()
+        out += html_searchform + html_addform
+        return html_template.format(content=out)
+    delete.exposed = True
 
 cherrypy.quickstart(Root())
