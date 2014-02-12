@@ -27,6 +27,16 @@ html_searchform = """
 </form>
 """
 
+html_addform = """
+<form name="add" action="/add" method="post">
+<input type="text" name="title">
+<input type="text" name="url">
+<input type="text" name="username">
+<input type="text" name="other">
+<input type="submit" value="Add">
+</form>
+"""
+
 html_results = """
 <table>
 <tr><td>{headers[0]}</td><td>{title}</td></tr>
