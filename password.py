@@ -18,12 +18,13 @@ def pwSearch(query):
     return result
 
 def showResult(result):
-    out = ''
+    out = '<table>'
     for row in result:
         i = 0
         for field in row:
-            out += headers[i] + ': ' + field + '<br />'
+            out += '<tr><td>' + headers[i] + ':</td><td>' + field + '</td></tr>'
             i += 1
+    out += '</table>'
     return out
 
 def newPassword():
