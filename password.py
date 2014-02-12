@@ -26,6 +26,17 @@ html_searchform = """
 <input type="submit" value="Search">
 </form>
 """
+
+html_results = """
+<table>
+<tr><td>{headers[0]}</td><td>{title}</td></tr>
+<tr><td>{headers[1]}</td><td><a href="{url}">{url}</a></td></tr>
+<tr><td>{headers[2]}</td><td>{username}</td></tr>
+<tr><td>{headers[3]}</td><td>{password}</td></tr>
+<tr><td>{headers[4]}</td><td>{other}</td></tr>
+</table>
+"""
+
 prompt = '> '
 headers = ('Title','URL','Username','Password','Other')
 
@@ -37,13 +48,9 @@ def pwSearch(query):
     return result
 
 def showResult(result):
-    out = '<table>\n'
+    out = ''
     for row in result:
-        i = 0
-        for field in row:
-            out += '<tr><td>' + headers[i] + ':</td><td>' + field + '</td></tr>\n'
-            i += 1
-    out += '</table>'
+        out += html_results.format(headers=headers,title=row[0],url=row[1],username=row[2],password=row[3],other=row[4])
     return out
 
 def newPassword():
