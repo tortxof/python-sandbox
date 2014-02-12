@@ -67,6 +67,7 @@ html_results = """
 <tr><td>{headers[2]}</td><td>{username}</td></tr>
 <tr><td>{headers[3]}</td><td>{password}</td></tr>
 <tr><td>{headers[4]}</td><td>{other}</td></tr>
+<tr><td>rowid</td><td>{rowid}</td></tr>
 </table>
 </div>
 """
@@ -74,14 +75,14 @@ headers = ('Title','URL','Username','Password','Other')
 
 def pwSearch(query):
     conn = sqlite3.connect(pwdatabase)
-    result = showResult(conn.execute("select * from passwords where name like ?", ['%{}%'.format(query)]))
+    result = showResult(conn.execute("select *,rowid from passwords where name like ?", ['%{}%'.format(query)]))
     conn.close()
     return result
 
 def showResult(result):
     out = ''
     for row in result:
-        out += html_results.format(headers=headers,title=row[0],url=row[1],username=row[2],password=row[3],other=row[4])
+        out += html_results.format(headers=headers,title=row[0],url=row[1],username=row[2],password=row[3],other=row[4],rowid=row[5])
     return out
 
 class Root(object):
@@ -99,7 +100,7 @@ class Root(object):
         newrecord[2] = username
         newrecord[3] = password = subprocess.check_output(['pwgen','-cn','12','1']).decode().strip()
         newrecord[4] = other
-        out += html_results.format(headers=headers,title=title,url=url,username=username,password=password,other=other)
+        out += html_results.format(headers=headers,title=title,url=url,username=username,password=password,other=other,rowid='')
         out += html_searchform + html_addform
         conn = sqlite3.connect(pwdatabase)   
         conn.execute('insert into passwords values (?, ?, ?, ?, ?)', newrecord)
