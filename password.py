@@ -7,6 +7,19 @@ import cherrypy
 pwdatabase = '/home/tortxof/private/passwords.db'
 # pwdatabase = ':memory:'
 
+html_template = """
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Password Manager</title>
+</head>
+<body>
+{content}
+</body>
+</html>
+"""
+
 html_searchform = """
 <form name="search" action="/search" method="post">
 <input type="text" name="query">
@@ -57,10 +70,10 @@ def newPassword():
 
 class Root(object):
     def index(self):
-        return html_searchform
+        return html_template.format(content=html_searchform)
     index.exposed = True
     def search(self, query):
-        return pwSearch(query) + html_searchform
+        return html_template.format(content=pwSearch(query) + html_searchform)
     search.exposed = True
 
 cherrypy.quickstart(Root())
