@@ -21,6 +21,7 @@ html_template = """
 """
 
 html_searchform = """
+Search<br />
 <form name="search" action="/search" method="post">
 <input type="text" name="query">
 <input type="submit" value="Search">
@@ -28,11 +29,14 @@ html_searchform = """
 """
 
 html_addform = """
+Add<br />
 <form name="add" action="/add" method="post">
-<input type="text" name="title">
-<input type="text" name="url">
-<input type="text" name="username">
-<input type="text" name="other">
+<table>
+<tr><td>Title:</td><td><input type="text" name="title"></td></tr>
+<tr><td>URL:</td><td><input type="text" name="url"></td></tr>
+<tr><td>Username:</td><td><input type="text" name="username"></td></tr>
+<tr><td>Other:</td><td><input type="text" name="other"></td></tr>
+</table>
 <input type="submit" value="Add">
 </form>
 """
@@ -87,11 +91,27 @@ def newPassword():
 
 class Root(object):
     def index(self):
-        return html_template.format(content=html_searchform)
+        return html_template.format(content=html_searchform + html_addform)
     index.exposed = True
-    def search(self, query):
-        return html_template.format(content=pwSearch(query) + html_searchform)
+    def search(self, query=''):
+        return html_template.format(content=pwSearch(query) + html_searchform + html_addform)
     search.exposed = True
+    def add(self, title, url='', username='', other=''):
+        out = ''
+        newrecord = ['' for i in range(5)]
+        newrecord[0] = title
+        newrecord[1] = url
+        newrecord[2] = username
+        newrecord[3] = subprocess.check_output(['pwgen','-cn','12','1']).decode().strip()
+        newrecord[4] = other
+        out += html_results.format(headers=headers,title=title,url=url,username=username,password=password,other=other)
+        out += html_searchform + html_addform
+        conn = sqlite3.connect(pwdatabase)   
+        conn.execute('insert into passwords values (?, ?, ?, ?, ?)', newrecord)
+        conn.commit()
+        conn.close()
+        return html_template.format(content=out)
+    add.exposed = True
 
 cherrypy.quickstart(Root())
 
