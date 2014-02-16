@@ -77,7 +77,13 @@ html_message = """
 """
 
 html_confirmdelete = """
-<div class="confirmdelete"><a href="/delete?rowid={rowid}&confirm=true">Confirm Delete</a></div>
+<div class="confirmdelete">
+<form name="confirmdelete" action="/delete" method="post">
+<input type="hidden" name="rowid" value="{rowid}">
+<input type="hidden" name="confirm" value="true">
+<input type="submit" value="Confirm Delete">
+</form>
+</div>
 """
 
 headers = ('Title','URL','Username','Password','Other')
