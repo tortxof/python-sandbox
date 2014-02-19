@@ -17,6 +17,12 @@ body {{
 background-color:#666;
 padding:16px;
 }}
+input, textarea
+{{
+font-family:monospace;
+font-size:14px;
+border:1px solid #666;
+}}
 .searchform, .addform, .results, .message, .confirmdelete {{
 background-color:#ccc;
 border:1px solid #333;
@@ -52,7 +58,7 @@ Add<br />
 <tr><td>Title:</td><td><input type="text" name="title"></td></tr>
 <tr><td>URL:</td><td><input type="text" name="url"></td></tr>
 <tr><td>Username:</td><td><input type="text" name="username"></td></tr>
-<tr><td>Other:</td><td><input type="text" name="other"></td></tr>
+<tr><td>Other:</td><td><textarea name="other"></textarea></td></tr>
 </table>
 <input type="submit" value="Add">
 </form>
