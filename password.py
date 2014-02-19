@@ -112,6 +112,9 @@ def showResult(result):
         out += html_results.format(headers=headers,title=row[0],url=row[1],username=row[2],password=row[3],other=row[4],rowid=row[5])
     return out
 
+def mkPasswd():
+    return subprocess.check_output(['pwgen','-cn','12','1']).decode().strip()
+
 class Root(object):
     def index(self):
         return html_template.format(content=html_searchform + html_addform)
@@ -125,7 +128,7 @@ class Root(object):
         newrecord[0] = title
         newrecord[1] = url
         newrecord[2] = username
-        newrecord[3] = password = subprocess.check_output(['pwgen','-cn','12','1']).decode().strip()
+        newrecord[3] = password = mkPasswd();
         newrecord[4] = other
         out += html_results.format(headers=headers,title=title,url=url,username=username,password=password,other=other,rowid='')
         out += html_searchform + html_addform
