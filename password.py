@@ -23,7 +23,8 @@ font-family:monospace;
 font-size:14px;
 border:1px solid #666;
 }}
-.searchform, .addform, .results, .message, .confirmdelete {{
+.searchform, .addform, .results, .message, .confirmdelete
+{{
 background-color:#ccc;
 border:1px solid #333;
 margin:16px;
