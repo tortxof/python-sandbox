@@ -26,8 +26,8 @@ border:1px solid #666;
 .searchform, .addform, .results, .message, .confirmdelete {{
 background-color:#ccc;
 border:1px solid #333;
-margin:32px;
-padding:32px;
+margin:16px;
+padding:16px;
 float:left;
 clear:both;
 }}
@@ -72,7 +72,7 @@ html_results = """\
 <tr><td>{headers[1]}</td><td><a href="{url}">{url}</a></td></tr>
 <tr><td>{headers[2]}</td><td>{username}</td></tr>
 <tr><td>{headers[3]}</td><td>{password}</td></tr>
-<tr><td>{headers[4]}</td><td>{other}</td></tr>
+<tr><td>{headers[4]}</td><td><pre>{other}</pre></td></tr>
 </table>
 <a href="/delete?rowid={rowid}">Delete</a>
 </div>
