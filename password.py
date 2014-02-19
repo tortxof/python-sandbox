@@ -43,7 +43,7 @@ clear:both;
 html_searchform = """\
 <div class="searchform">
 Search<br />
-<form name="search" action="/search" method="post">
+<form name="search" action="/search" method="get">
 <input type="text" name="query">
 <input type="submit" value="Search">
 </form>
