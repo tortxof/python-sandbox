@@ -14,13 +14,18 @@ html_template = """\
 <meta charset="UTF-8">
 <style>
 body {{
+font-size:16px;
 background-color:#666;
 padding:16px;
+}}
+.password
+{{
+font-family:monospace;
 }}
 input, textarea
 {{
 font-family:monospace;
-font-size:14px;
+font-size:16px;
 border:1px solid #666;
 }}
 .searchform, .addform, .results, .message, .confirmdelete
@@ -69,11 +74,11 @@ Add<br />
 html_results = """\
 <div class="results">
 <table>
-<tr><td>{headers[0]}</td><td>{title}</td></tr>
-<tr><td>{headers[1]}</td><td><a href="{url}">{url}</a></td></tr>
-<tr><td>{headers[2]}</td><td>{username}</td></tr>
-<tr><td>{headers[3]}</td><td>{password}</td></tr>
-<tr><td>{headers[4]}</td><td><pre>{other}</pre></td></tr>
+<tr><td>{headers[0]}:</td><td>{title}</td></tr>
+<tr><td>{headers[1]}:</td><td><a href="{url}">{url}</a></td></tr>
+<tr><td>{headers[2]}:</td><td>{username}</td></tr>
+<tr><td>{headers[3]}:</td><td class="password">{password}</td></tr>
+<tr><td>{headers[4]}:</td><td><pre>{other}</pre></td></tr>
 </table>
 <a href="/delete?rowid={rowid}">Delete</a>
 </div>
