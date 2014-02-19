@@ -7,7 +7,7 @@ import cherrypy
 pwdatabase = '/home/tortxof/private/passwords.db'
 # pwdatabase = ':memory:'
 
-html_template = """
+html_template = """\
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,7 +34,7 @@ clear:both;
 </html>
 """
 
-html_searchform = """
+html_searchform = """\
 <div class="searchform">
 Search<br />
 <form name="search" action="/search" method="post">
@@ -44,7 +44,7 @@ Search<br />
 </div>
 """
 
-html_addform = """
+html_addform = """\
 <div class="addform">
 Add<br />
 <form name="add" action="/add" method="post">
@@ -59,7 +59,7 @@ Add<br />
 </div>
 """
 
-html_results = """
+html_results = """\
 <div class="results">
 <table>
 <tr><td>{headers[0]}</td><td>{title}</td></tr>
@@ -72,11 +72,11 @@ html_results = """
 </div>
 """
 
-html_message = """
+html_message = """\
 <div class="message">{message}</div>
 """
 
-html_confirmdelete = """
+html_confirmdelete = """\
 <div class="confirmdelete">
 <form name="confirmdelete" action="/delete" method="post">
 <input type="hidden" name="rowid" value="{rowid}">
