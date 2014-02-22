@@ -41,7 +41,9 @@ clear:both;
 <title>Password Manager</title>
 </head>
 <body>
+<div class="message"><a href="/">Home</a></div>
 {content}
+<div class="message"><a href="/">Home</a></div>
 </body>
 </html>
 """
