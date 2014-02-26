@@ -6,7 +6,7 @@ import cherrypy
 import os
 import datetime
 
-pwdatabase = '/home/tortxof/private/passwords.db'
+pwdatabase = os.environ['HOME'] + '/private/passwords.db'
 # pwdatabase = ':memory:'
 
 # Set key expiration time in seconds
