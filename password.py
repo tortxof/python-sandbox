@@ -168,7 +168,7 @@ class Root(object):
         newrecord[0] = title
         newrecord[1] = url
         newrecord[2] = username
-        newrecord[3] = password = mkPasswd();
+        newrecord[3] = password = mkPasswd()
         newrecord[4] = other
         out += html_results.format(headers=headers,title=title,url=url,username=username,password=password,other=other,rowid='')
         out += html_searchform + html_addform
