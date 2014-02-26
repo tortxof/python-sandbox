@@ -3,9 +3,14 @@
 import sqlite3
 import subprocess
 import cherrypy
+import os
+import datetime
 
 pwdatabase = '/home/tortxof/private/passwords.db'
 # pwdatabase = ':memory:'
+
+# Set key expiration time in seconds
+keyExpTime = 60 * 5
 
 html_template = """\
 <!DOCTYPE html>
@@ -95,12 +100,43 @@ html_confirmdelete = """\
 <form name="confirmdelete" action="/delete" method="post">
 <input type="hidden" name="rowid" value="{rowid}">
 <input type="hidden" name="confirm" value="true">
+<input type="hidden" name="key" value="{key}">
 <input type="submit" value="Confirm Delete">
 </form>
 </div>
 """
 
 headers = ('Title','URL','Username','Password','Other')
+
+def newKey():
+    '''Creates new key, adds it to database with timestamp, and returns it.'''
+    key = ''.join(['{:02x}'.format(x) for x in os.urandom(16)])
+    date = int(datetime.datetime.timestamp(datetime.datetime.now()))
+    conn = sqlite3.connect(pwdatabase)
+    conn.execute("insert into keys values (?, ?)", (key, date))
+    conn.commit()
+    conn.close()
+    return key
+
+def keyValid(key):
+    '''Return True if key is in database and is not expired.'''
+    if key == '':
+        return False
+    conn = sqlite3.connect(pwdatabase)
+    dates = [i for i in conn.execute("select date from keys where key=?", (key,))]
+    conn.close()
+    for date in dates:
+        if (date[0] + keyExpTime) > int(datetime.datetime.timestamp(datetime.datetime.now())):
+            return True
+    return False
+
+def clearKeys():
+    '''Removes expired keys from database.'''
+    exp_date = int(datetime.datetime.timestamp(datetime.datetime.now())) - keyExpTime
+    conn = sqlite3.connect(pwdatabase)
+    conn.execute("delete from keys where date < ?", (exp_date,))
+    conn.commit()
+    conn.close()
 
 def pwSearch(query):
     conn = sqlite3.connect(pwdatabase)
@@ -140,9 +176,10 @@ class Root(object):
         conn.close()
         return html_template.format(content=out)
     add.exposed = True
-    def delete(self, rowid, confirm=''):
+    def delete(self, rowid, confirm='', key=''):
+        clearKeys()
         out = ''
-        if confirm == 'true':
+        if (confirm == 'true') and keyValid(key):
             conn = sqlite3.connect(pwdatabase)
             out += html_message.format(message="Record Deleted")
             out += showResult(conn.execute("select *,rowid from passwords where rowid=?", [rowid]))
@@ -153,7 +190,7 @@ class Root(object):
             conn = sqlite3.connect(pwdatabase)
             out += html_message.format(message="Are you sure you want to delete this record?")
             out += showResult(conn.execute("select *,rowid from passwords where rowid=?", [rowid]))
-            out += html_confirmdelete.format(rowid=rowid)
+            out += html_confirmdelete.format(rowid=rowid, key=newKey())
             conn.close()
         out += html_searchform + html_addform
         return html_template.format(content=out)
