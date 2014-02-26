@@ -119,11 +119,13 @@ def newKey():
     return key
 
 def keyValid(key):
-    '''Return True if key is in database and is not expired.'''
+    '''Return True if key is in database and is not expired. Removes checked key.'''
     if key == '':
         return False
     conn = sqlite3.connect(pwdatabase)
     dates = [i for i in conn.execute("select date from keys where key=?", (key,))]
+    conn.execute("delete from keys where key=?", (key,))
+    conn.commit()
     conn.close()
     for date in dates:
         if (date[0] + keyExpTime) > int(datetime.datetime.timestamp(datetime.datetime.now())):
