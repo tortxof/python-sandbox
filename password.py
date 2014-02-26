@@ -108,10 +108,16 @@ html_confirmdelete = """\
 
 headers = ('Title','URL','Username','Password','Other')
 
+def genHex(length=16):
+    return ''.join(['{:02x}'.format(x) for x in os.urandom(length)])
+
+def nowUnixInt():
+    return int(datetime.datetime.timestamp(datetime.datetime.now()))
+
 def newKey():
     '''Creates new key, adds it to database with timestamp, and returns it.'''
-    key = ''.join(['{:02x}'.format(x) for x in os.urandom(16)])
-    date = int(datetime.datetime.timestamp(datetime.datetime.now()))
+    key = genHex()
+    date = nowUnixInt()
     conn = sqlite3.connect(pwdatabase)
     conn.execute("insert into keys values (?, ?)", (key, date))
     conn.commit()
@@ -128,13 +134,13 @@ def keyValid(key):
     conn.commit()
     conn.close()
     for date in dates:
-        if (date[0] + keyExpTime) > int(datetime.datetime.timestamp(datetime.datetime.now())):
+        if (date[0] + keyExpTime) > nowUnixInt():
             return True
     return False
 
 def clearKeys():
     '''Removes expired keys from database.'''
-    exp_date = int(datetime.datetime.timestamp(datetime.datetime.now())) - keyExpTime
+    exp_date = nowUnixInt() - keyExpTime
     conn = sqlite3.connect(pwdatabase)
     conn.execute("delete from keys where date < ?", (exp_date,))
     conn.commit()
