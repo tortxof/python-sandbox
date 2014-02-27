@@ -55,7 +55,6 @@ clear:both;
 
 html_searchform = """\
 <div class="searchform">
-Search<br />
 <form name="search" action="/search" method="get">
 <input type="text" name="query">
 <input type="submit" value="Search">
@@ -65,7 +64,6 @@ Search<br />
 
 html_addform = """\
 <div class="addform">
-Add<br />
 <form name="add" action="/add" method="post">
 <table>
 <tr><td>Title:</td><td><input type="text" name="title"></td></tr>
@@ -117,6 +115,7 @@ html_login = """\
 headers = ('Title','URL','Username','Password','Other')
 
 def loggedIn():
+    '''Checks if current auth cookie is valid.'''
     cookie = cherrypy.request.cookie
     if keyValid(cookie['auth'].value):
         return True
@@ -124,9 +123,11 @@ def loggedIn():
         return False
 
 def genHex(length=32):
+    '''Generate random hex string.'''
     return ''.join(['{:02x}'.format(x) for x in os.urandom(length)])
 
 def nowUnixInt():
+    '''Return int unix time.'''
     return int(datetime.datetime.timestamp(datetime.datetime.now()))
 
 def newKey():
@@ -161,18 +162,21 @@ def clearKeys():
     conn.close()
 
 def pwSearch(query):
+    '''Returns results of search.'''
     conn = sqlite3.connect(pwdatabase)
     result = showResult(conn.execute("select *,rowid from passwords where name like ?", ['%{}%'.format(query)]))
     conn.close()
     return result
 
 def showResult(result):
+    '''Renders given results.'''
     out = ''
     for row in result:
         out += html_results.format(headers=headers,title=row[0],url=row[1],username=row[2],password=row[3],other=row[4],rowid=row[5])
     return out
 
 def mkPasswd():
+    '''Returns generated password from pwgen command line utility.'''
     return subprocess.check_output(['pwgen','-cn','12','1']).decode().strip()
 
 class Root(object):
@@ -180,7 +184,8 @@ class Root(object):
         out = ''
         if not loggedIn():
             out += html_login
-        out += html_searchform + html_addform
+        else:
+            out += html_searchform + html_addform
         return html_template.format(content=out)
     index.exposed = True
 
@@ -194,56 +199,58 @@ class Root(object):
             cookie['auth'] = newKey()
             out += html_message.format(message='You are now logged in.') + html_searchform + html_addform
         else:
-            out += html_message.format(message='Login failed.')
+            out += html_message.format(message='Login failed.') + html_login
         return html_template.format(content=out)
     login.exposed = True
 
     def search(self, query=''):
         out = ''
         if not loggedIn():
-            out += html_message.format(message='You are not logged in.')
+            out += html_message.format(message='You are not logged in.') + html_login
         else:
             out += pwSearch(query) + html_searchform + html_addform
         return html_template.format(content=out)
     search.exposed = True
 
     def add(self, title, url='', username='', other=''):
-        if not loggedIn():
-            return html_template.format(content=html_message.format(message='You are not logged in.'))
         out = ''
-        newrecord = ['' for i in range(5)]
-        newrecord[0] = title
-        newrecord[1] = url
-        newrecord[2] = username
-        newrecord[3] = password = mkPasswd()
-        newrecord[4] = other
-        out += html_results.format(headers=headers,title=title,url=url,username=username,password=password,other=other,rowid='')
-        out += html_searchform + html_addform
-        conn = sqlite3.connect(pwdatabase)   
-        conn.execute('insert into passwords values (?, ?, ?, ?, ?)', newrecord)
-        conn.commit()
-        conn.close()
+        if not loggedIn():
+            out += html_message.format(message='You are not logged in.') + html_login
+        else:
+            newrecord = ['' for i in range(5)]
+            newrecord[0] = title
+            newrecord[1] = url
+            newrecord[2] = username
+            newrecord[3] = password = mkPasswd()
+            newrecord[4] = other
+            out += html_results.format(headers=headers,title=title,url=url,username=username,password=password,other=other,rowid='')
+            out += html_searchform + html_addform
+            conn = sqlite3.connect(pwdatabase)   
+            conn.execute('insert into passwords values (?, ?, ?, ?, ?)', newrecord)
+            conn.commit()
+            conn.close()
         return html_template.format(content=out)
     add.exposed = True
 
     def delete(self, rowid, confirm=''):
-        if not loggedIn():
-            return html_template.format(content=html_message.format(message='You are not logged in.'))
         out = ''
-        if confirm == 'true':
-            conn = sqlite3.connect(pwdatabase)
-            out += html_message.format(message="Record Deleted")
-            out += showResult(conn.execute("select *,rowid from passwords where rowid=?", [rowid]))
-            conn.execute("delete from passwords where rowid=?", [rowid])
-            conn.commit()
-            conn.close()
+        if not loggedIn():
+            out += html_message.format(message='You are not logged in.') + html_login
         else:
-            conn = sqlite3.connect(pwdatabase)
-            out += html_message.format(message="Are you sure you want to delete this record?")
-            out += showResult(conn.execute("select *,rowid from passwords where rowid=?", [rowid]))
-            out += html_confirmdelete.format(rowid=rowid)
-            conn.close()
-        out += html_searchform + html_addform
+            if confirm == 'true':
+                conn = sqlite3.connect(pwdatabase)
+                out += html_message.format(message="Record Deleted")
+                out += showResult(conn.execute("select *,rowid from passwords where rowid=?", [rowid]))
+                conn.execute("delete from passwords where rowid=?", [rowid])
+                conn.commit()
+                conn.close()
+            else:
+                conn = sqlite3.connect(pwdatabase)
+                out += html_message.format(message="Are you sure you want to delete this record?")
+                out += showResult(conn.execute("select *,rowid from passwords where rowid=?", [rowid]))
+                out += html_confirmdelete.format(rowid=rowid)
+                conn.close()
+            out += html_searchform + html_addform
         return html_template.format(content=out)
     delete.exposed = True
 
