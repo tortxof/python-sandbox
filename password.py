@@ -117,10 +117,10 @@ headers = ('Title','URL','Username','Password','Other')
 def loggedIn():
     '''Checks if current auth cookie is valid.'''
     cookie = cherrypy.request.cookie
-    if keyValid(cookie['auth'].value):
-        return True
-    else:
-        return False
+    if 'auth' in cookie.keys():
+        if keyValid(cookie['auth'].value):
+            return True
+    return False
 
 def genHex(length=32):
     '''Generate random hex string.'''
