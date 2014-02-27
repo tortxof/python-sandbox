@@ -146,29 +146,22 @@ def newKey():
 
 def keyValid(key):
     '''Return True if key is in database and is not expired. Updates timestamp if key is valid.'''
-    clearKeys()
-    now = nowUnixInt()
     if key == '':
         return False
+    now = nowUnixInt()
+    exp_date = now - keyExpTime
     conn = sqlite3.connect(pwdatabase)
-    dates = [i for i in conn.execute("select date from keys where key=?", (key,))]
-    conn.close()
+    conn.execute("delete from keys where date < ?", (exp_date,))
+    dates = [i[0] for i in conn.execute("select date from keys where key=?", (key,))]
     for date in dates:
-        if (date[0] + keyExpTime) > now:
-            conn = sqlite3.connect(pwdatabase)
+        if (date + keyExpTime) > now:
             conn.execute("update keys set date=? where key=?", (now,key))
             conn.commit()
             conn.close()
             return True
-    return False
-
-def clearKeys():
-    '''Removes expired keys from database.'''
-    exp_date = nowUnixInt() - keyExpTime
-    conn = sqlite3.connect(pwdatabase)
-    conn.execute("delete from keys where date < ?", (exp_date,))
     conn.commit()
     conn.close()
+    return False
 
 def pwSearch(query):
     '''Returns results of search.'''
