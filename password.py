@@ -12,8 +12,6 @@ pwdatabase = os.environ['HOME'] + '/private/passwords.db'
 # Set key expiration time in seconds
 keyExpTime = 60 * 5
 
-MASTER_PASS = '1234'
-
 html_template = """\
 <!DOCTYPE html>
 <html>
@@ -35,7 +33,7 @@ font-family:monospace;
 font-size:16px;
 border:1px solid #666;
 }}
-.searchform, .addform, .results, .message, .confirmdelete
+.searchform, .addform, .loginform, .results, .message, .confirmdelete
 {{
 background-color:#ccc;
 border:1px solid #333;
@@ -107,6 +105,15 @@ html_confirmdelete = """\
 </div>
 """
 
+html_login = """\
+<div class="loginform">
+<form name="login" action="/login" method="post">
+<input type="password" name="password">
+<input type="submit" value="Login">
+</form>
+</div>
+"""
+
 headers = ('Title','URL','Username','Password','Other')
 
 def loggedIn():
@@ -170,22 +177,34 @@ def mkPasswd():
 
 class Root(object):
     def index(self):
-        return html_template.format(content=html_searchform + html_addform)
+        out = ''
+        if not loggedIn():
+            out += html_login
+        out += html_searchform + html_addform
+        return html_template.format(content=out)
     index.exposed = True
 
     def login(self, password=''):
-        if password == MASTER_PASS:
+        out = ''
+        conn = sqlite3.connect(pwdatabase)
+        passwords = [i[0] for i in conn.execute("select * from master_pass", ())]
+        conn.close()
+        if password in passwords:
             cookie = cherrypy.response.cookie
             cookie['auth'] = newKey()
-            return html_template.format(content=html_message.format(message='You are now logged in.'))
+            out += html_message.format(message='You are now logged in.') + html_searchform + html_addform
         else:
-            return html_template.format(content=html_message.format(message='Login failed.'))
+            out += html_message.format(message='Login failed.')
+        return html_template.format(content=out)
     login.exposed = True
 
     def search(self, query=''):
+        out = ''
         if not loggedIn():
-            return html_template.format(content=html_message.format(message='You are not logged in.'))
-        return html_template.format(content=pwSearch(query) + html_searchform + html_addform)
+            out += html_message.format(message='You are not logged in.')
+        else:
+            out += pwSearch(query) + html_searchform + html_addform
+        return html_template.format(content=out)
     search.exposed = True
 
     def add(self, title, url='', username='', other=''):
