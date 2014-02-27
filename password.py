@@ -166,7 +166,7 @@ def keyValid(key):
 def pwSearch(query):
     '''Returns results of search.'''
     conn = sqlite3.connect(pwdatabase)
-    result = showResult(conn.execute("select *,rowid from passwords where name like ?", ['%{}%'.format(query)]))
+    result = showResult(conn.execute("select *,rowid from passwords where title like ?", ['%{}%'.format(query)]))
     conn.close()
     return result
 
