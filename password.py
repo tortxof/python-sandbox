@@ -12,6 +12,8 @@ pwdatabase = os.environ['HOME'] + '/private/passwords.db'
 # Set key expiration time in seconds
 keyExpTime = 60 * 5
 
+MASTER_PASS = '1234'
+
 html_template = """\
 <!DOCTYPE html>
 <html>
@@ -100,7 +102,6 @@ html_confirmdelete = """\
 <form name="confirmdelete" action="/delete" method="post">
 <input type="hidden" name="rowid" value="{rowid}">
 <input type="hidden" name="confirm" value="true">
-<input type="hidden" name="key" value="{key}">
 <input type="submit" value="Confirm Delete">
 </form>
 </div>
@@ -108,7 +109,14 @@ html_confirmdelete = """\
 
 headers = ('Title','URL','Username','Password','Other')
 
-def genHex(length=16):
+def loggedIn():
+    cookie = cherrypy.request.cookie
+    if keyValid(cookie['auth'].value):
+        return True
+    else:
+        return False
+
+def genHex(length=32):
     return ''.join(['{:02x}'.format(x) for x in os.urandom(length)])
 
 def nowUnixInt():
@@ -125,13 +133,12 @@ def newKey():
     return key
 
 def keyValid(key):
-    '''Return True if key is in database and is not expired. Removes checked key.'''
+    '''Return True if key is in database and is not expired.'''
+    clearKeys()
     if key == '':
         return False
     conn = sqlite3.connect(pwdatabase)
     dates = [i for i in conn.execute("select date from keys where key=?", (key,))]
-    conn.execute("delete from keys where key=?", (key,))
-    conn.commit()
     conn.close()
     for date in dates:
         if (date[0] + keyExpTime) > nowUnixInt():
@@ -165,10 +172,25 @@ class Root(object):
     def index(self):
         return html_template.format(content=html_searchform + html_addform)
     index.exposed = True
+
+    def login(self, password=''):
+        if password == MASTER_PASS:
+            cookie = cherrypy.response.cookie
+            cookie['auth'] = newKey()
+            return html_template.format(content=html_message.format(message='You are now logged in.'))
+        else:
+            return html_template.format(content=html_message.format(message='Login failed.'))
+    login.exposed = True
+
     def search(self, query=''):
+        if not loggedIn():
+            return html_template.format(content=html_message.format(message='You are not logged in.'))
         return html_template.format(content=pwSearch(query) + html_searchform + html_addform)
     search.exposed = True
+
     def add(self, title, url='', username='', other=''):
+        if not loggedIn():
+            return html_template.format(content=html_message.format(message='You are not logged in.'))
         out = ''
         newrecord = ['' for i in range(5)]
         newrecord[0] = title
@@ -184,10 +206,12 @@ class Root(object):
         conn.close()
         return html_template.format(content=out)
     add.exposed = True
-    def delete(self, rowid, confirm='', key=''):
-        clearKeys()
+
+    def delete(self, rowid, confirm=''):
+        if not loggedIn():
+            return html_template.format(content=html_message.format(message='You are not logged in.'))
         out = ''
-        if (confirm == 'true') and keyValid(key):
+        if confirm == 'true':
             conn = sqlite3.connect(pwdatabase)
             out += html_message.format(message="Record Deleted")
             out += showResult(conn.execute("select *,rowid from passwords where rowid=?", [rowid]))
@@ -198,7 +222,7 @@ class Root(object):
             conn = sqlite3.connect(pwdatabase)
             out += html_message.format(message="Are you sure you want to delete this record?")
             out += showResult(conn.execute("select *,rowid from passwords where rowid=?", [rowid]))
-            out += html_confirmdelete.format(rowid=rowid, key=newKey())
+            out += html_confirmdelete.format(rowid=rowid)
             conn.close()
         out += html_searchform + html_addform
         return html_template.format(content=out)
