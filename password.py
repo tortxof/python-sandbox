@@ -9,6 +9,10 @@ import datetime
 pwdatabase = os.environ['HOME'] + '/private/passwords.db'
 # pwdatabase = ':memory:'
 
+cherrypy.config.update({'server.socket_host': '0.0.0.0',
+                        'server.socket_port': 8080,
+                        })
+
 # Set key expiration time in seconds
 keyExpTime = 60 * 5
 
