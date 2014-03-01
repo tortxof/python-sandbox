@@ -2,15 +2,16 @@
 
 import sqlite3
 import subprocess
-import cherrypy
 import os
+import cherrypy
 import time
+import config
 
-pwdatabase = os.environ['HOME'] + '/private/passwords.db'
+pwdatabase = config.dbfile
 # pwdatabase = ':memory:'
 
-cherrypy.config.update({'server.socket_host': '0.0.0.0',
-                        'server.socket_port': 8080,
+cherrypy.config.update({'server.socket_host': config.host,
+                        'server.socket_port': config.port,
                         })
 
 # Set key expiration time in seconds
