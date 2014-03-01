@@ -4,7 +4,7 @@ import sqlite3
 import subprocess
 import cherrypy
 import os
-import datetime
+import time
 
 pwdatabase = os.environ['HOME'] + '/private/passwords.db'
 # pwdatabase = ':memory:'
@@ -132,7 +132,7 @@ def genHex(length=32):
 
 def nowUnixInt():
     '''Return int unix time.'''
-    return int(datetime.datetime.timestamp(datetime.datetime.now()))
+    return int(time.time())
 
 def newKey():
     '''Creates new key, adds it to database with timestamp, and returns it.'''
