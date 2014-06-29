@@ -18,20 +18,17 @@ html_addform = '''\
 </div>
 '''
 
+@cherrypy.popargs('key')
 class Root(object):
-    def _cp_dispatch(self, vpath):
-        if len(vpath) == 1:
-            cherrypy.request.params['key'] = vpath.pop()
-            return self
-        return vpath
 
+    @cherrypy.expose
     def index(self, key=''):
         if key in urls:
             raise cherrypy.HTTPRedirect(urls[key])
         else:
             return html_addform
-    index.exposed = True
 
+    @cherrypy.expose
     def add(self, url, key=''):
         if key == '':
             while key == '' or key in urls:
@@ -40,13 +37,12 @@ class Root(object):
             return 'Key already in use.'
         urls[key] = url
         return key  + ' = ' + url
-    add.exposed = True
 
+    @cherrypy.expose
     def list(self):
         out = ''
         for i in urls:
             out += i + ' = ' + urls[i] + '<br />'
         return out
-    list.exposed = True
 
 cherrypy.quickstart(Root())
