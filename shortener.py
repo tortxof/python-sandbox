@@ -34,11 +34,19 @@ class Root(object):
 
     def add(self, url, key=''):
         if key == '':
-            key = ''.join(['{:02x}'.format(x) for x in os.urandom(4)])
+            while key == '' or key in urls:
+                key = ''.join(['{:02x}'.format(x) for x in os.urandom(3)])
         if key in urls:
             return 'Key already in use.'
         urls[key] = url
-        return 'Key added.'
+        return key  + ' = ' + url
     add.exposed = True
+
+    def list(self):
+        out = ''
+        for i in urls:
+            out += i + ' = ' + urls[i] + '<br />'
+        return out
+    list.exposed = True
 
 cherrypy.quickstart(Root())
