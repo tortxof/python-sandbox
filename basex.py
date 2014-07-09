@@ -1,7 +1,8 @@
 #! /usr/bin/env python3
 
-# alphabet = '2346789BCDFGHJKMPQRTVWXY'
-alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+msft = '2346789BCDFGHJKMPQRTVWXY'
+base58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+alphabet = base58
 
 
 def numduplicates(alphabet):
