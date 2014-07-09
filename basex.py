@@ -19,5 +19,5 @@ def basex(number, alphabet):
     while number > 0:
         remainder = number % len(alphabet)
         number = number // len(alphabet)
-        myHast += alphabet[remainder]
+        myHash += alphabet[remainder]
     return myHash[::-1]
